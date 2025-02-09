@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meditation Advisor</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Meditation Advisor</h1>
+        <a href="index.html">Home</a>
+    </header>
+
+    <section class="meditation-section">
+        <h2>Select a Disease</h2>
+        <select id="disease">
+            <option value="">Select a Disease</option>
+        </select>
+
+        <h3>Advice & Meditation Techniques</h3>
+        <div id="advice-container">
+            <p>Select a disease to get advice.</p>
+        </div>
+    </section>
+
+    <script>
+    async function fetchMeditationAdvice() {
+        const response = await fetch('/get_meditation_advice');
+        const diseases = await response.json();
+
+        const diseaseDropdown = document.getElementById("disease");
+        const adviceContainer = document.getElementById("advice-container");
+
+        diseases.forEach(disease => {
+            const option = document.createElement("option");
+            option.value = disease.name;
+            option.textContent = disease.name;
+            diseaseDropdown.appendChild(option);
+        });
+
+        diseaseDropdown.addEventListener("change", function() {
+            const selectedDisease = diseases.find(d => d.name === this.value);
+            if (selectedDisease) {
+                adviceContainer.innerHTML = `<p><strong>Advice:</strong> ${selectedDisease.advice}</p>
+                                             <p><strong>Meditation:</strong> ${selectedDisease.meditation}</p>`;
+            } else {
+                adviceContainer.innerHTML = "<p>Select a disease to get advice.</p>";
+            }
+        });
+    }
+
+    fetchMeditationAdvice();
+</script>
+</body>
+</html>
